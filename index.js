@@ -255,6 +255,16 @@ app.get('/userReviews', isAuthenticated, async (req, res) => {
     res.send("ERROR: Cannot access page")
   }
 });
+// Deletes specific user's review
+app.post('/delReview', isAuthenticated, async (req, res) => {
+  let reviewId = req.body.reviewId;
+  let userId = req.body.userId;
+  let sql = `DELETE 
+               FROM reviews
+               WHERE reviewId = ${reviewId}`;
+  let rows = await executeSQL(sql);
+  res.redirect(`/userReviews?id=${userId}`)
+});
 // Allows users to add reviews
 app.post('/addReview', isAuthenticated, async (req, res) => {
   let userId = req.body.id;

@@ -35,6 +35,16 @@
           <p class="listItems">Review:   <%=reviews[i].description%></p>
           <br>
           <p class="listItems">Rating:  <%=reviews[i].rating%> </p>
+          <% if (user[0].userId == reviews[i].userId) { %>
+            <!-- Allows delete functionality -->
+            <div class="delete">
+              <form method="POST" action="/delReview">
+                <input type="hidden" name="reviewId" value="<%=reviews[i].reviewId%>">
+                <input type="hidden" name="userId" value="<%=user[0].userId%>">
+                <button class="btn btn-danger">Delete</button>
+              </form>
+            </div>
+          <% } %>
         </div>
       </div>
     <% } %>

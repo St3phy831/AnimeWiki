@@ -29,12 +29,12 @@
     <% for (let i = 0; i < reviews.length; i++) { %>
       <div class="card border-primary mb-3">
         <div class="card-body animeList">
-          <p class="listItems"><%=(i+1)%></p>
-          <p class="listItems">Username:  <%=reviews[i].username%></p>
-          <p class="listItems">Anime Title:  <%=reviews[i].title%></p>
-          <p class="listItems">Review:   <%=reviews[i].description%></p>
+          <p class="listItems number"><b><%=(i+1)%></b></p>
+          <p class="listItems"><b>Username:</b>  <%=reviews[i].username%></p>
+          <p class="listItems"><b>Anime Title:</b>  <%=reviews[i].title%></p>
+          <p class="listItems"><b>Review:</b>   <%=reviews[i].description%></p>
           <br>
-          <p class="listItems">Rating:  <%=reviews[i].rating%> </p>
+          <p class="listItems"><b>Rating:</b>  <%=reviews[i].rating%> </p>
           <% if (user[0].userId == reviews[i].userId) { %>
             <!-- Allows delete functionality -->
             <div class="delete">

@@ -16,10 +16,10 @@
     <% for (let i = 0; i < anime.length; i++) { %>
       <div class="card border-primary mb-3">
         <div class="card-body animeList">
-          <p class="listItems"><%=(i+1)%></p>
+          <p class="listItems number"><b><%=(i+1)%></b></p>
           <img class="listItems" src="<%=anime[i].imgUrl%>">
-          <p class="listItems"><%=anime[i].title%></p>
-<!--           Allows delete functionality -->
+          <p class="listItems"><b>Title:</b> <%=anime[i].title%></p>
+          <!-- Allows delete functionality -->
           <div class="delete">
             <form method="POST" action="/delFromWatchlist">
               <input type="hidden" name="animeId" value="<%=anime[i].animeId%>">

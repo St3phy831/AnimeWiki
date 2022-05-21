@@ -135,9 +135,9 @@ app.get('/myWatchlist', isAuthenticated, async (req, res) => {
 // Deletes specific user's anime from list
 // Since each entry has unique animeId, no need to check if it's the 
 // right user because only that user's anime is displayed
-app.get('/delFromWatchlist', isAuthenticated, async (req, res) => {
-  let animeId = req.query.animeId;
-  let userId = req.query.userId;
+app.post('/delFromWatchlist', isAuthenticated, async (req, res) => {
+  let animeId = req.body.animeId;
+  let userId = req.body.userId;
   let sql = `DELETE 
                FROM anime
                WHERE animeId = ${animeId}`;

@@ -21,7 +21,7 @@
           <p class="listItems"><%=anime[i].title%></p>
 <!--           Allows delete functionality -->
           <div class="delete">
-            <form action="/delFromWatchlist">
+            <form method="POST" action="/delFromWatchlist">
               <input type="hidden" name="animeId" value="<%=anime[i].animeId%>">
               <input type="hidden" name="userId" value="<%=user[0].userId%>">
               <button class="btn btn-danger">Delete</button>

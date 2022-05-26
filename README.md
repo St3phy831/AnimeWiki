@@ -1,7 +1,6 @@
 # AnimeWiki
-**Project Description:** AnimeWiki is a Node.js web application that was created for anime lovers. It allows users to create an account, log in, browse/explore anime, write reviews, and create a watchlist.
+**Project Description:** AnimeWiki is a Node.js web application created for anime lovers. It allows users to create an account, log in, browse/explore anime, write reviews, and create a watchlist. This web application was developed as part of a final group project for my Internet Programming class (CST336) alongside my teammates, [Melody Neely](https://github.com/Melodyncr), [Christopher Lendechy](https://github.com/ChristopherLendechy), and [Dylan Glo Ignacio](https://github.com/Dylan-Glo).
 ## Instructions to Run
----
 ### Prerequisites:
 1. Make sure you have Node.js installed on your local computer
 2. Need to have a MySQL database

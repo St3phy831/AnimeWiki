@@ -15,3 +15,22 @@
 2. Within the directory, run `node index.js`
 3. Go to a web browser and type `localhost:3000`
 4. Finally, signup to create login credentials
+## Web Application Images
+### Login
+<img src="img/login.png" alt="Login Screen" width="500"/>
+
+### Profile
+<img src="img/profile.png" alt="Profile Screen" width="500"/>
+
+### Top Recommendations
+<img src="img/topRecs.png" alt="Top Recommendations Screen" width="500"/>
+
+### Search
+<img src="img/search.png" alt="Search Screen" width="500"/>
+
+### Reviews
+<img src="img/reviews.png" alt="Reviews Screen" width="500"/>
+<img src="img/addReview.png" alt="Add a Review Screen" width="500"/>
+
+### Watchlist
+<img src="img/watchlist.png" alt="Watchlist Screen" width="500"/>

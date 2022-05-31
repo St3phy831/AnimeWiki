@@ -12,9 +12,9 @@ async function displaySearch(){
   let search = document.querySelector('#animeSearch');
   // Resets search results
   searchResults.innerHTML = "";
+  // Displays Results Title
+  searchTitle.style.display = "block";
   if (search.value == ""){
-    // Displays Results Title
-    searchTitle.style.display = "block";
     searchResults.innerHTML = "No Results";
   }else{
     // API for Anime Shows Info

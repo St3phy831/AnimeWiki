@@ -33,6 +33,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/', (req, res) => {
   res.render('home')
 });
+
 // Handles sing up functionality
 app.post('/signup', async (req, res) => {
   let username = req.body.username;
@@ -68,6 +69,7 @@ app.post('/signup', async (req, res) => {
     res.redirect(`/profile?id=${rows[0].userId}`)
   }
 });
+
 // Handles log in functionality
 app.post('/login', async (req, res) => {
   let username = req.body.username;
@@ -95,61 +97,55 @@ app.post('/login', async (req, res) => {
     }
   }
 });
+
 app.get('/logout', isAuthenticated, (req, res) => {
   req.session.destroy();
   res.redirect('/');
 });
-app.get('/topRec', isAuthenticated, async (req, res) => {
-    let userId = req.query.id;
-    if (req.session.currId == userId){
-      rows = await getUserInfoById(userId);
-      res.render('topRecs', {"user": rows})
-    }else{
-      res.send("ERROR: Cannot access page")
-    }
-});
-app.get('/search', isAuthenticated, async (req, res) => {
+
+app.get('/topRec', isAuthenticated, isUser, async (req, res) => {
   let userId = req.query.id;
-  if (req.session.currId == userId){
-    rows = await getUserInfoById(userId);
-    res.render('search', { "user": rows })
-  }else {
-    res.send("ERROR: Cannot access page")
-  }
+  rows = await getUserInfoById(userId);
+  res.render('topRecs', {"user": rows})
 });
-app.get('/myWatchlist', isAuthenticated, async (req, res) => {
+
+app.get('/search', isAuthenticated, isUser, async (req, res) => {
   let userId = req.query.id;
-  if (req.session.currId == userId){
-    // gets userInfo & all anime for specific user
-    userInfo = await getUserInfoById(userId);
-    let sql = `SELECT * 
-                 FROM anime
-                 WHERE userId = ?`;
-    let params = [userId];
-    let rows = await executeSQL(sql, params);
-    res.render('watchlist', { "user": userInfo, "anime": rows })
-  }else{
-    res.send("ERROR: Cannot access page")
-  }
+  rows = await getUserInfoById(userId);
+  res.render('search', { "user": rows })
 });
+
+app.get('/myWatchlist', isAuthenticated, isUser, async (req, res) => {
+  let userId = req.query.id;
+  // gets userInfo & all anime for specific user
+  userInfo = await getUserInfoById(userId);
+  let sql = `SELECT * 
+              FROM anime
+              WHERE userId = ?`;
+  let params = [userId];
+  let rows = await executeSQL(sql, params);
+  res.render('watchlist', { "user": userInfo, "anime": rows })
+});
+
 // Deletes specific user's anime from list
 // Since each entry has unique animeId, no need to check if it's the 
 // right user because only that user's anime is displayed
-app.post('/delFromWatchlist', isAuthenticated, async (req, res) => {
+app.post('/delFromWatchlist', isAuthenticated, isUser, async (req, res) => {
   let animeId = req.body.animeId;
-  let userId = req.body.userId;
+  let userId = req.body.id;
   let sql = `DELETE 
                FROM anime
                WHERE animeId = ${animeId}`;
   let rows = await executeSQL(sql);
   res.redirect(`/myWatchlist?id=${userId}`)
 });
+
 // Allows users to add anime to watchlist
-app.post('/addToWatchlist', isAuthenticated, async (req, res) => {
+app.post('/addToWatchlist', isAuthenticated, isUser, async (req, res) => {
   let userId = req.body.id;
   let title = req.body.title;
   let imgUrl = req.body.imgUrl;
-  let url = `https://finalproject.dylangloglo.repl.co/api/watchlist/${userId}&${title}`;
+  let url = `${process.env.URL}/api/watchlist/${userId}&${title}`;
   let response = await fetch(url);
   let data = await response.json();
   // if already not added to watchlist then insert
@@ -166,6 +162,7 @@ app.post('/addToWatchlist', isAuthenticated, async (req, res) => {
   // console.log(userId, title, imgUrl);
   res.redirect(`/myWatchlist?id=${userId}`)
 });
+
 // API will be used to check if anime already added to watchlist
 app.get('/api/watchlist/:id&:title', async (req, res) => {
   let userId = req.params.id;
@@ -181,17 +178,15 @@ app.get('/api/watchlist/:id&:title', async (req, res) => {
   // when use api use send
   res.send(rows);
 });
-app.get('/profile', isAuthenticated, async (req, res) => {
+
+app.get('/profile', isAuthenticated, isUser, async (req, res) => {
   let userId = req.query.id;
-  if (req.session.currId == userId){
-    rows = await getUserInfoById(userId);
-    res.render('profile', { "user": rows })
-  }else{
-    res.send("ERROR: Cannot access page")
-  }
+  rows = await getUserInfoById(userId);
+  res.render('profile', { "user": rows })
 });
+
 // Updates user's info
-app.post('/profile', isAuthenticated, async (req, res) => {
+app.post('/profile', isAuthenticated, isUser, async (req, res) => {
   let userId = req.body.id;
   let fName = req.body.firstName;
   let lName = req.body.lastName;
@@ -213,8 +208,9 @@ app.post('/profile', isAuthenticated, async (req, res) => {
     res.render('profile', { "user": rows })
   }
 });
+
 // Updates user's password
-app.post('/updatePass', isAuthenticated, async (req, res) => {
+app.post('/updatePass', isAuthenticated, isUser, async (req, res) => {
   let userId = req.body.id;
   let password = req.body.password;
   rows = await getUserInfoById(userId);
@@ -239,34 +235,33 @@ app.post('/updatePass', isAuthenticated, async (req, res) => {
     res.render('profile', { "user": rows })
   }
 });
-app.get('/userReviews', isAuthenticated, async (req, res) => {
+
+app.get('/userReviews', isAuthenticated, isUser, async (req, res) => {
   let userId = req.query.id;
   // gets userInfo & all anime for specific user
-  if (req.session.currId == userId){
-    userInfo = await getUserInfoById(userId);
-    let sql = `SELECT *
-               FROM reviews r
-               INNER JOIN users u
-               ON r.userId = u.userId`;
-    let rows = await executeSQL(sql);
-    // console.log(userInfo);
-    res.render('userReviews', { "user": userInfo, "reviews": rows})
-  }else {
-    res.send("ERROR: Cannot access page")
-  }
+  userInfo = await getUserInfoById(userId);
+  let sql = `SELECT *
+             FROM reviews r
+             INNER JOIN users u
+             ON r.userId = u.userId`;
+  let rows = await executeSQL(sql);
+  // console.log(userInfo);
+  res.render('userReviews', { "user": userInfo, "reviews": rows})
 });
+
 // Deletes specific user's review
-app.post('/delReview', isAuthenticated, async (req, res) => {
+app.post('/delReview', isAuthenticated, isUser, async (req, res) => {
   let reviewId = req.body.reviewId;
-  let userId = req.body.userId;
+  let userId = req.body.id;
   let sql = `DELETE 
-               FROM reviews
-               WHERE reviewId = ${reviewId}`;
+             FROM reviews
+             WHERE reviewId = ${reviewId}`;
   let rows = await executeSQL(sql);
   res.redirect(`/userReviews?id=${userId}`)
 });
+
 // Allows users to add reviews
-app.post('/addReview', isAuthenticated, async (req, res) => {
+app.post('/addReview', isAuthenticated, isUser, async (req, res) => {
   let userId = req.body.id;
   let title = req.body.title;
   let rating = req.body.rating;
@@ -293,6 +288,7 @@ app.post('/addReview', isAuthenticated, async (req, res) => {
     res.redirect(`/userReviews?id=${userId}`)
   }
 });
+
 async function getUserInfo(username) {
   let sql = `SELECT *
               FROM users
@@ -300,6 +296,7 @@ async function getUserInfo(username) {
   let rows = await executeSQL(sql, [username]);
   return rows
 }
+
 async function getUserInfoById(userId) {
   let sql = `SELECT *
               FROM users
@@ -315,6 +312,15 @@ function isAuthenticated(req, res, next) {
     res.render('home')
   }
 }
+
+function isUser(req, res, next) {
+  if (req.session.currId == req.query.id || req.session.currId == req.body.id) {
+    next();
+  } else {
+    res.send("ERROR: Cannot access page")
+  }
+}
+
 app.get("/dbTest", async function(req, res) {
   let sql = "SELECT CURDATE()";
   let rows = await executeSQL(sql);
@@ -330,16 +336,17 @@ async function executeSQL(sql, params) {
     });
   });
 }//executeSQL
+
 //values in red must be updated
 function dbConnection() {
 
   const pool = mysql.createPool({
 
     connectionLimit: 10,
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
+    host: process.env.DB_HOSTNAME,
+    user: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
-    database: "xgq6mij16ktfs3mz"
+    database: process.env.DB_NAME
 
   });
 

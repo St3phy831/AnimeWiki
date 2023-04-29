@@ -41,7 +41,7 @@ async function formatSeachResults(resultsArr){
       `<div class="card text-light bg-info w-75">
         <div class="card-body">
           <form method="POST" action="/addToWatchlist">
-            <input type="hidden" name="title" value="${resultsArr[j].title}">
+            <input type="hidden" name="title" value='${resultsArr[j].title}'>
             <input type="hidden" name="imgUrl" value="${resultsArr[j].images.jpg.small_image_url}">
             <input type="hidden" name="id" value="${userId}">
             <div class="add"><button class="btn btn-success">✓</button></div>
